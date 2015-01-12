@@ -13,6 +13,10 @@ class ArticlesController < ApplicationController
       find_article(article_url)
     end
 
+    articles = articles.select do |article|
+      !article["error"]
+    end
+
     render json: {articles: articles}
   end
 
@@ -28,12 +32,13 @@ class ArticlesController < ApplicationController
     article = JSON.parse(article_json)
     article[:article_url] = article_url
     article[:id] = Rack::Utils.escape(article_url)
+    Rails.logger.info article.to_yaml
     article
   end
 
   def conf
     token = "5b5629d14f122b6a00b582078489eaf84780fcc2";
-    parser_url = "https://www.readability.com//api/content/v1/parser?url=%{url}&token=#{token}"
+    parser_url = "https://www.readability.com/api/content/v1/parser?url=%{url}&token=#{token}"
     rss_url = "https://www.readability.com/rseero/latest/feed"
     {
       token: token,

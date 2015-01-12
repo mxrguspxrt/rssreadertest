@@ -1,5 +1,19 @@
-{{#each article in this}}
-  {{article.article_url}}
-{{else}}
-  No articles found
-{{/each}}
+<div class="row articles">
+  {{#each article in this}}
+
+    <div class="col-xs-12 col-sm-4 article">
+      <img {{bind-attr src=article.lead_image_url}} />
+
+      <h4>{{article.title}}</h4>
+      {{article.excerpt}}
+      {{#link-to "article" article}}Read more{{/link-to}}
+    </div>
+
+  {{else}}
+
+    <div class="col-xs-12">
+      No articles found
+    </div>
+
+  {{/each}}
+</div>

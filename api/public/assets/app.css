@@ -1,3 +1,32 @@
 html, body {
   margin: 20px;
 }
+
+.articles div:nth-child(4) {
+  clear: both;
+}
+
+.article img {
+  padding: 10px;
+  width: 30%;
+  min-width: 100px;
+  float: right;
+}
+
+
+@media (max-width: 768px) {
+  .articles .article img {
+    padding: 10px;
+    width: 30%;
+    min-width: 100px;
+    float: left;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .articles .article {
+    height: 200px;
+    overflow: hidden;
+  }
+}

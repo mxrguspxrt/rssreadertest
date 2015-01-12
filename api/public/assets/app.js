@@ -29,6 +29,25 @@ define("app/controllers/articles",
 
     });
   });
+define("app/helpers/test-breadcrumbs", 
+  ["ember","ember-cli-bootstrap/utils/test-breadcrumbs","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
+    "use strict";
+    var Ember = __dependency1__["default"];
+    var BsBreadcrumbs = __dependency2__["default"];
+
+    debugger
+    __exports__["default"] = Ember.Handlebars.makeBoundHelper(BsBreadcrumbs);
+  });
+define("app/helpers/test-helper", 
+  ["ember","ember-cli-bootstrap/utils/test-helper","exports"],
+  function(__dependency1__, __dependency2__, __exports__) {
+    "use strict";
+    var Ember = __dependency1__["default"];
+    var testHelper = __dependency2__["default"];
+
+    __exports__["default"] = Ember.Handlebars.makeBoundHelper(testHelper);
+  });
 define("app/initializers/export-application-global", 
   ["ember","app/config/environment","exports"],
   function(__dependency1__, __dependency2__, __exports__) {
@@ -50,6 +69,37 @@ define("app/initializers/export-application-global",
       initialize: initialize
     };
   });
+define("app/initializers/test-breadcrumbs", 
+  ["app/helpers/test-breadcrumbs","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var testHelper = __dependency1__["default"];
+
+    function initialize(/* container, application */) {
+      debugger
+      Ember.Handlebars.registerHelper('test-breadcrumbs', testHelper);
+    };
+    __exports__.initialize = initialize;
+    __exports__["default"] = {
+      name: 'test-breadcrumbs',
+      initialize: initialize
+    };
+  });
+define("app/initializers/test-helper", 
+  ["app/helpers/test-helper","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var testHelper = __dependency1__["default"];
+
+    function initialize(/* container, application */) {
+      Ember.Handlebars.registerHelper('test-helper', testHelper);
+    };
+    __exports__.initialize = initialize;
+    __exports__["default"] = {
+      name: 'test-helper',
+      initialize: initialize
+    };
+  });
 define("app/models/article", 
   ["ember-data","exports"],
   function(__dependency1__, __exports__) {
@@ -61,7 +111,11 @@ define("app/models/article",
       error: DS.attr("boolean"),
       mesage: DS.attr(),
 
-      article_url: DS.attr()
+      title: DS.attr(),
+      article_url: DS.attr(),
+      excerpt: DS.attr(),
+      content: DS.attr(),
+      lead_image_url: DS.attr()
 
     });
   });
@@ -78,6 +132,7 @@ define("app/router",
 
     Router.map(function() {
       this.route("articles", {path: "/"});
+      this.route("article", {path: "/article/:article_id"});
     });
 
     __exports__["default"] = Router;
@@ -89,6 +144,20 @@ define("app/routes/application",
     var Ember = __dependency1__["default"];
 
     __exports__["default"] = Ember.Route.extend({
+
+    });
+  });
+define("app/routes/article", 
+  ["ember","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var Ember = __dependency1__["default"];
+
+    __exports__["default"] = Ember.Route.extend({
+
+      model: function(params) {
+        return this.store.find("article", params.article_id);
+      }
 
     });
   });
@@ -124,6 +193,32 @@ define("app/templates/application",
       
     });
   });
+define("app/templates/article", 
+  ["ember","exports"],
+  function(__dependency1__, __exports__) {
+    "use strict";
+    var Ember = __dependency1__["default"];
+    __exports__["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    this.compilerInfo = [4,'>= 1.0.0'];
+    helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+      var buffer = '', stack1, escapeExpression=this.escapeExpression;
+
+
+      data.buffer.push("<div class=\"row\">\n\n  <div class=\"col-xs-12\">\n    <img ");
+      data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+        'src': ("lead_image_url")
+      },hashTypes:{'src': "ID"},hashContexts:{'src': depth0},contexts:[],types:[],data:data})));
+      data.buffer.push(" />\n\n    <h4>");
+      stack1 = helpers._triageMustache.call(depth0, "title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("</h4>\n    ");
+      stack1 = helpers._triageMustache.call(depth0, "excerpt", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("\n  </div>\n\n</div>");
+      return buffer;
+      
+    });
+  });
 define("app/templates/articles", 
   ["ember","exports"],
   function(__dependency1__, __exports__) {
@@ -132,27 +227,43 @@ define("app/templates/articles",
     __exports__["default"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-      var buffer = '', stack1, self=this;
+      var buffer = '', stack1, escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
 
     function program1(depth0,data) {
       
-      var buffer = '', stack1;
-      data.buffer.push("\n  ");
-      stack1 = helpers._triageMustache.call(depth0, "article.article_url", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+      var buffer = '', stack1, helper, options;
+      data.buffer.push("\n\n    <div class=\"col-xs-12 col-sm-4 article\">\n      <img ");
+      data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+        'src': ("article.lead_image_url")
+      },hashTypes:{'src': "ID"},hashContexts:{'src': depth0},contexts:[],types:[],data:data})));
+      data.buffer.push(" />\n\n      <h4>");
+      stack1 = helpers._triageMustache.call(depth0, "article.title", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
       if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-      data.buffer.push("\n");
+      data.buffer.push("</h4>\n      ");
+      stack1 = helpers._triageMustache.call(depth0, "article.excerpt", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("\n      ");
+      stack1 = (helper = helpers['link-to'] || (depth0 && depth0['link-to']),options={hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0,depth0],types:["STRING","ID"],data:data},helper ? helper.call(depth0, "article", "article", options) : helperMissing.call(depth0, "link-to", "article", "article", options));
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("\n    </div>\n\n  ");
       return buffer;
       }
-
-    function program3(depth0,data) {
+    function program2(depth0,data) {
       
       
-      data.buffer.push("\n  No articles found\n");
+      data.buffer.push("Read more");
       }
 
-      stack1 = helpers.each.call(depth0, "article", "in", "", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
+    function program4(depth0,data) {
+      
+      
+      data.buffer.push("\n\n    <div class=\"col-xs-12\">\n      No articles found\n    </div>\n\n  ");
+      }
+
+      data.buffer.push("<div class=\"row articles\">\n  ");
+      stack1 = helpers.each.call(depth0, "article", "in", "", {hash:{},hashTypes:{},hashContexts:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],data:data});
       if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-      data.buffer.push("\n");
+      data.buffer.push("\n</div>");
       return buffer;
       
     });
@@ -282,6 +393,15 @@ define("app/tests/routes/application.jshint",
     module('JSHint - routes');
     test('routes/application.js should pass jshint', function() { 
       ok(true, 'routes/application.js should pass jshint.'); 
+    });
+  });
+define("app/tests/routes/article.jshint", 
+  [],
+  function() {
+    "use strict";
+    module('JSHint - routes');
+    test('routes/article.js should pass jshint', function() { 
+      ok(true, 'routes/article.js should pass jshint.'); 
     });
   });
 define("app/tests/routes/articles.jshint", 
