@@ -8,8 +8,11 @@ https://rvm.io/rvm/install
 
 
   git clone git@github.com:mxrguspxrt/rssreadertest.git
+
   cd rssreadertest/api
+
   bundle install
+
   rails s
 
   visit localhost:3000
